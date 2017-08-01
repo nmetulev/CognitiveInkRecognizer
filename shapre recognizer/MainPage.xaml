@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="shapre_recognizer.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:shapre_recognizer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <InkCanvas x:Name="Inker"></InkCanvas>
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <TextBlock Text="" x:Name="result"  Margin="30" FontSize="32"></TextBlock>
+            <TextBlock Text="" x:Name="resultPer" Margin="30"></TextBlock>
+        </StackPanel>
+       
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Click="Button_Click" >DO IT!</Button>
+            <Button Click="ClearClicked">Clear</Button>
+        </StackPanel>
+    </Grid>
+</Page>
