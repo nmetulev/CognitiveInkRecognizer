@@ -106,7 +106,8 @@ namespace shapre_recognizer
             
             using (var client = new HttpClient())
             {
-                var url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/dd105cca-c262-4d53-aa6d-69a3f8da8e9c/image?iterationId=979d32cd-5fc2-4707-9a6e-36d3c597af03";
+                var url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/dd105cca-c262-4d53-aa6d-69a3f8da8e9c/image";
+
                 client.DefaultRequestHeaders.Add("Prediction-Key", "39c59d59c944411d88eb9e4fd20e84ec");
 
                 var bytes = new byte[stream.Size];
