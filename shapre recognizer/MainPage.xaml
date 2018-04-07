@@ -7,7 +7,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style TargetType="FontIcon" x:Key="FontIconResource">
+            <Setter Property="FontFamily" Value="Segoe UI Emoji" />
+            <Setter Property="FontSize" Value="80" />
+        </Style>
+
+        <Style TargetType="FontIcon" BasedOn="{StaticResource FontIconResource}" x:Key="CarFontIcon">
+            <Setter Property="Glyph" Value="&#x1f697;" />
+        </Style>
+
+        <Style TargetType="FontIcon" BasedOn="{StaticResource FontIconResource}" x:Key="FlowerFontIcon">
+            <Setter Property="Glyph" Value="&#x1f33b;" />
+        </Style>
+
+        <Style TargetType="FontIcon" BasedOn="{StaticResource FontIconResource}" x:Key="StickFontIcon">
+            <Setter Property="Glyph" Value="&#x1f604;" />
+        </Style>
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Canvas x:Name="Drawer"></Canvas>
+
         <InkCanvas x:Name="Inker"></InkCanvas>
         <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
             <TextBlock Text="" x:Name="result"  Margin="30" FontSize="32"></TextBlock>
