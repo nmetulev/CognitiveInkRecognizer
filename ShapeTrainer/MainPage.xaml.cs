@@ -86,27 +86,10 @@ namespace ShapeTrainer
             //if (SystemInformation.IsFirstRun)
             //{
             FindName("FirstRun");
-            MarkdownText.Text = @"# YOU ROCK!
-
-### Thank you for installing the app!
-
-This app is used to crowdsource hand drawn shapes to train a machine learning model for shape recognition. You will be asked you to draw a shape. Simply use your mouse, pen or finger to draw the shape on the canvas. 
-
-
-Once you are satisfied with your masterpiece, hit the :heavy_check_mark:. This will upload an image of the shape to Azure Custom Vision with the tag name.
-
-
-If you made a mistake, just hit the :x: to clear the canvas.
-
-Each shape will be random and you will be asked to draw the same shape multiple times. The more shapes you draw, the better the model will be :)
-
-Any questions or comments, feel free to reach out on [Twitter](https://twitter.com/metulev)
-
-Thanks,
-Nikola";
+            MarkdownText.Text = (await FileIO.ReadTextAsync(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///FirstRun.md"))));
             //}
             //else
-            // TrainerGrid.Visibility = Visibility.Visible;
+            //    TrainerGrid.Visibility = Visibility.Visible;
         }
 
         private void FirstRunStartClicked(object sender, RoutedEventArgs e)
@@ -155,17 +138,21 @@ Nikola";
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var tagName = _currentTag.Name;
-            var tagId = _currentTag.Id.ToString();
-            var bitmap = Inker.GetCropedSoftwareBitmap(newWidth: 200, newHeight: 200, keepRelativeSize: true);
+            // skip shape if nothing is drawn
+            if (Inker.InkPresenter.StrokeContainer.GetStrokes().Count > 0)
+            {
+                var tagName = _currentTag.Name;
+                var tagId = _currentTag.Id.ToString();
+                var bitmap = Inker.GetCropedSoftwareBitmap(newWidth: 200, newHeight: 200, keepRelativeSize: true);
 
-            Inker.InkPresenter.StrokeContainer.Clear();
+                Inker.InkPresenter.StrokeContainer.Clear();
+
+                StorageFile file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync($"{tagName}.png", CreationCollisionOption.GenerateUniqueName);
+                bitmap.SaveToFile(file);
+                SendShapeForTraining(bitmap, tagId);
+            }
+
             SetupNextTag();
-
-            StorageFile file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync($"{tagName}.png", CreationCollisionOption.GenerateUniqueName);
-            bitmap.SaveToFile(file);
-            SendShapeForTraining(bitmap, tagId);
-            
         }
 
         private void ClearClicked(object sender, RoutedEventArgs e)
