@@ -1,0 +1,3 @@
+[submodule "Cognitive-CustomVision-Windows"]
+	path = Cognitive-CustomVision-Windows
+	url = https://github.com/nmetulev/Cognitive-CustomVision-Windows

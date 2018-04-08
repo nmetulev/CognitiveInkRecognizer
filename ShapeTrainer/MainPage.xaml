@@ -5,14 +5,141 @@
     xmlns:local="using:ShapeTrainer"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    xmlns:developerTools="using:Microsoft.Toolkit.Uwp.DeveloperTools"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <InkCanvas x:Name="Inker"></InkCanvas>
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush>
+                <GradientStop Color="#ad5389" Offset="0" />
+                <GradientStop Color="#3c1053" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
-        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button Click="Button_Click" >DO IT!</Button>
-            <Button Click="ClearClicked">Clear</Button>
-        </StackPanel>
+        <!--<TextBlock VerticalAlignment="Top" 
+                   HorizontalAlignment="Center" 
+                   Margin="10"
+                   Text="SHAPE TRAINER" 
+                   Foreground="White"
+                   FontWeight="SemiBold"
+                   Opacity="0.8"/>-->
+
+        <Image x:Name="Title"
+               Source="ms-appx:///Assets/StoreLogo.png" 
+               VerticalAlignment="Top" Height="30"
+               HorizontalAlignment="Center" Margin="5" 
+               Visibility="Collapsed"
+               extensions:VisualExtensions.NormalizedCenterPoint="0.5">
+            <animations:Implicit.ShowAnimations>
+                <animations:RotationInDegreesAnimation From="720" To="0" SetInitialValueBeforeDelay="True" Delay="0:0:0.3"/>
+                <animations:ScaleAnimation From="0.1, 0.1, 0.1" To="1" SetInitialValueBeforeDelay="True" Delay="0:0:0.3"/>
+            </animations:Implicit.ShowAnimations>
+        </Image>
+
+        <Grid x:Name="FirstRun">
+            
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            HorizontalScrollMode="Disabled" 
+                        VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
+                <Border Padding="0,0,0,100">
+                    <controls:MarkdownTextBlock x:Name="MarkdownText"
+                                            Opacity="0.8"
+                                            HorizontalAlignment="Stretch"
+                                            Margin="40"
+                                            Foreground="White"
+                                            Header1FontWeight="SemiLight"
+                                            Header3Foreground="White"
+                                            Header3FontSize="24"
+                                            Header3FontWeight="Light"
+                                            Header1FontSize="48"
+                                            FontSize="20"
+                                            FontWeight="Light"
+                                                LinkClicked="MarkdownText_LinkClicked"
+                                            ParagraphMargin="0,40"
+                                            Header1Foreground="White" />
+                </Border>
+                
+            </ScrollViewer>
+            <Button  HorizontalAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource ButtonStyle}" Click="FirstRunStartClicked" Margin="40">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="60"/>
+            </Button>
+
+        </Grid>
+
+        <Grid x:Name="TrainerGrid" Visibility="Collapsed">
+            <animations:Implicit.ShowAnimations>
+                <animations:OpacityAnimation From="0.6" To="1" />
+            </animations:Implicit.ShowAnimations>
+            <controls:DropShadowPanel Margin="40, 40, 40, 80" 
+                                  BlurRadius="30"
+                                  ShadowOpacity="0.6"
+                                  HorizontalContentAlignment="Stretch" 
+                                  VerticalContentAlignment="Stretch">
+                <Border Background="White" extensions:VisualExtensions.NormalizedCenterPoint="0.5, 0.5, 0">
+                    <animations:Implicit.ShowAnimations>
+                        <animations:ScaleAnimation From="0.8" To="1" Duration="0:0:0.6" />
+                    </animations:Implicit.ShowAnimations>
+                    <Grid>
+                        <developerTools:AlignmentGrid
+                            Opacity="0.8"
+                            extensions:VisualExtensions.NormalizedCenterPoint="0.5, 0.5, 0"
+                            LineBrush="#16161616"
+                            HorizontalStep="20"
+                            VerticalStep="20">
+                            <animations:Implicit.ShowAnimations>
+                                <animations:ScaleAnimation From="1.2" To="1" Duration="0:0:1" />
+                            </animations:Implicit.ShowAnimations>
+                        </developerTools:AlignmentGrid>
+                        <InkCanvas x:Name="Inker"></InkCanvas>
+
+                    </Grid>
+                </Border>
+
+            </controls:DropShadowPanel>
+
+            <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="40, 20">
+                    <animations:Implicit.ShowAnimations>
+                        <animations:TranslationAnimation From="0, 200, 0" To="0" Duration="0:0:0.5"/>
+                    </animations:Implicit.ShowAnimations>
+                    <TextBlock Text="PLEASE DRAW" Foreground="White" Opacity="0.7" FontSize="12"></TextBlock>
+                    <TextBlock x:Name="TagText" Text="STICK FIGURE" Foreground="White" FontSize="22"></TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="20, 0, 40, 0" VerticalAlignment="Center">
+                    <animations:Implicit.ShowAnimations>
+                        <animations:TranslationAnimation From="0, 200, 0" To="0" Duration="0:0:0.9"/>
+                    </animations:Implicit.ShowAnimations>
+                    <Button Style="{StaticResource ButtonStyle}" Click="Button_Click" Margin="20,0">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="40"/>
+                    </Button>
+                    <Button Style="{StaticResource ButtonStyle}" Click="ClearClicked" >
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="40"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <Border Background="#ad5389" x:Name="FakeSplashScreen" Visibility="Collapsed">
+            <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="ms-appx:///Assets/SplashScreen.png" Stretch="None" extensions:VisualExtensions.NormalizedCenterPoint="0.5, 0.5, 0">
+                <animations:Implicit.HideAnimations>
+                    <animations:RotationInDegreesAnimation To="720" />
+                    <animations:ScaleAnimation To="0.1, 0.1, 0.1" />
+                </animations:Implicit.HideAnimations>
+            </Image>
+
+            <animations:Implicit.HideAnimations>
+                <animations:OpacityAnimation To="0" Delay="0:0:0.2"/>
+            </animations:Implicit.HideAnimations>
+        </Border>
     </Grid>
 </Page>
