@@ -159,13 +159,35 @@
             </Button>
         </Grid>
 
-        <Border Background="#ad5389" x:Name="FakeSplashScreen">
-            <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="ms-appx:///Assets/SplashScreen.png" Stretch="None" extensions:VisualExtensions.NormalizedCenterPoint="0.5, 0.5, 0">
-                <animations:Implicit.HideAnimations>
-                    <animations:RotationInDegreesAnimation To="720" />
-                    <animations:ScaleAnimation To="0.1, 0.1, 0.1" />
-                </animations:Implicit.HideAnimations>
-            </Image>
+        <Border x:Name="FakeSplashScreen">
+            <Border.Background>
+                <LinearGradientBrush>
+                    <GradientStop Color="#ad5389" Offset="0" />
+                    <GradientStop Color="#3c1053" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="ms-appx:///Assets/SplashScreen.png" Stretch="None" extensions:VisualExtensions.NormalizedCenterPoint="0.5, 0.5, 0">
+                    <animations:Implicit.HideAnimations>
+                        <animations:RotationInDegreesAnimation To="720" />
+                        <animations:ScaleAnimation To="0.1, 0.1, 0.1" />
+                    </animations:Implicit.HideAnimations>
+                </Image>
+
+                <StackPanel VerticalAlignment="Bottom" x:Name="ErrorText" Visibility="Collapsed">
+                    <TextBlock 
+                           Margin="10" 
+                           Foreground="White" 
+                           TextAlignment="Center" 
+                           FontSize="18">something is wrong, please try again later</TextBlock>
+                    <TextBlock 
+                           Margin="10,0,0,40" 
+                           Foreground="White" 
+                           TextAlignment="Center" 
+                           FontSize="14">(could be the internet)</TextBlock>
+                </StackPanel>
+               
+            </Grid>
 
             <animations:Implicit.HideAnimations>
                 <animations:OpacityAnimation To="0" Delay="0:0:0.2"/>

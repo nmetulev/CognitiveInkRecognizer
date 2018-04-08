@@ -62,34 +62,47 @@ namespace ShapeTrainer
 
         private async Task<bool> SetupTraining()
         {
-            var projects = _trainingApi.GetProjects();
-            _project = (from p in projects where p.Name == _customVisionProjectName select p).FirstOrDefault();
+            try
+            {
+                var projects = _trainingApi.GetProjects();
+                _project = (from p in projects where p.Name == _customVisionProjectName select p).FirstOrDefault();
 
-            if (_project == null)
+                if (_project == null)
+                {
+                    return false;
+                }
+
+                _tags = await _trainingApi.GetTagsAsync(_project.Id);
+            }
+            catch (Exception)
             {
                 return false;
             }
-
-            _tags = await _trainingApi.GetTagsAsync(_project.Id);
 
             return true;
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            await SetupTraining();
-            SetupNextTag();
+            if (await SetupTraining())
+            {
+                SetupNextTag();
 
-            FakeSplashScreen.Visibility = Visibility.Collapsed;
-            Title.Visibility = Visibility.Visible;
+                FakeSplashScreen.Visibility = Visibility.Collapsed;
+                Title.Visibility = Visibility.Visible;
 
-            //if (SystemInformation.IsFirstRun)
-            //{
-            FindName("FirstRun");
-            MarkdownText.Text = (await FileIO.ReadTextAsync(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///FirstRun.md"))));
-            //}
-            //else
-            //    TrainerGrid.Visibility = Visibility.Visible;
+                if (SystemInformation.IsFirstRun)
+                {
+                    FindName("FirstRun");
+                    MarkdownText.Text = (await FileIO.ReadTextAsync(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///FirstRun.md"))));
+                }
+                else
+                    TrainerGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ErrorText.Visibility = Visibility.Visible;
+            }
         }
 
         private void FirstRunStartClicked(object sender, RoutedEventArgs e)
