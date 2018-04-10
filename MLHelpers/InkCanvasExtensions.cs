@@ -37,15 +37,16 @@ namespace MLHelpers
 
             if (keepRelativeSize)
             {
+                // copy strokes, resize them, but keep the stroke size the same, tranlsate to as close to 0, 0 as possible
                 List<InkStroke> newStrokes = new List<InkStroke>();
                 var scaleX = (float)(newWidth / bounds.Width);
                 var scaleY = (float)(newHeight / bounds.Height);
-                var translateX = (float)bounds.X - (float)bounds.X * scaleX;
-                var translateY = (float)bounds.Y - (float)bounds.Y * scaleY;
+                var translateX = 1 - (float)bounds.X * scaleX;
+                var translateY = 1 - (float)bounds.Y * scaleY;
 
                 foreach (var stroke in strokes)
                 {
-                    
+
 
                     var newStroke = stroke.Clone();
                     newStroke.PointTransform = Matrix3x2.CreateScale(scaleX, scaleY) * Matrix3x2.CreateTranslation(translateX, translateY);
@@ -56,6 +57,8 @@ namespace MLHelpers
                 bounds = strokes.GetBoundingBoxForInkStrokes();
             }
 
+            bounds.X = Math.Max(bounds.X, 0);
+            bounds.Y = Math.Max(bounds.Y, 0);
             var bitmap = canvas.GetSoftwareBitmap(strokes);
 
             if (newWidth > 0 && newHeight > 0)
