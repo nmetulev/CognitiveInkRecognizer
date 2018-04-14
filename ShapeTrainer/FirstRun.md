@@ -12,7 +12,9 @@ Once you are satisfied with your masterpiece, hit the :heavy_check_mark:. This w
 
 If you made a mistake, just hit the :x: to clear the canvas.
 
-Each shape will be random and you will be asked to draw the same shape multiple times. The more shapes you draw, the better :)
+To just skip the current shape, hit the :arrows_counterclockwise:
+
+Each shape will be random and you might be asked to draw the same shape few times. The more shapes you draw, the better :)
 
 Have Fun!
 

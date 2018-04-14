@@ -90,11 +90,14 @@
                     <animations:Implicit.ShowAnimations>
                         <animations:TranslationAnimation From="0, 200, 0" To="0" Duration="0:0:0.9"/>
                     </animations:Implicit.ShowAnimations>
-                    <Button Style="{StaticResource ButtonStyle}" Click="Button_Click" Margin="20,0">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="40"/>
+                    <Button Style="{StaticResource ButtonStyle}" Click="SkipClicked">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEDAB;" FontSize="40"/>
                     </Button>
-                    <Button Style="{StaticResource ButtonStyle}" Click="ClearClicked" >
+                    <Button Style="{StaticResource ButtonStyle}" Click="ClearClicked" Margin="20,0">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE711;" FontSize="40"/>
+                    </Button>
+                    <Button Style="{StaticResource ButtonStyle}" Click="SubmitClicked" >
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" FontSize="40"/>
                     </Button>
                 </StackPanel>
             </Grid>

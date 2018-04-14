@@ -5,6 +5,7 @@ using Microsoft.Toolkit.Uwp.Helpers;
 using MLHelpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -39,9 +40,10 @@ namespace ShapeTrainer
         private static TrainingApi _trainingApi = new TrainingApi() { ApiKey = _trainingKey };
         private static Project _project;
         private static TagList _tags;
+        private static Random random = new Random(Guid.NewGuid().GetHashCode());
 
+        private Queue<Tag> _previousTags = new Queue<Tag>();
         private Tag _currentTag;
-        private Random random = new Random((int)DateTime.Now.Ticks);
 
         public MainPage()
         {
@@ -118,8 +120,13 @@ namespace ShapeTrainer
             {
                 tag = _tags.Tags[random.Next(0, _tags.Tags.Count)];
             }
-            while (tag == _currentTag);
+            while (_previousTags.Contains(tag));
 
+            _previousTags.Enqueue(tag);
+            if (_previousTags.Count > _tags.Tags.Count / 2)
+            {
+                _previousTags.Dequeue();
+            }
             _currentTag = tag;
 
 
@@ -138,19 +145,24 @@ namespace ShapeTrainer
                 try
                 {
                     await encoder.FlushAsync();
+                    await _trainingApi.CreateImagesFromDataAsync(_project.Id, stream.AsStream(), new List<string> { tagId });
                 }
                 catch (Exception)
                 {
                     // nop
                 }
-
-                await _trainingApi.CreateImagesFromDataAsync(_project.Id, stream.AsStream(), new List<string> { tagId });
             }
-
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async Task SaveBitmapToFile(SoftwareBitmap bitmap, string filename)
         {
+            StorageFile file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync($"{filename}.png", CreationCollisionOption.GenerateUniqueName).AsTask();
+            await bitmap.SaveToFile(file);
+        }
+
+        private void SubmitClicked(object sender, RoutedEventArgs e)
+        {
+            var dateStart = DateTime.Now;
             // skip shape if nothing is drawn
             if (Inker.InkPresenter.StrokeContainer.GetStrokes().Count > 0)
             {
@@ -158,19 +170,30 @@ namespace ShapeTrainer
                 var tagId = _currentTag.Id.ToString();
                 var bitmap = Inker.GetCropedSoftwareBitmap(newWidth: 200, newHeight: 200, keepRelativeSize: true);
 
+                Debug.WriteLine($"timespent getting bitmap: {(DateTime.Now - dateStart).TotalMilliseconds}");
+
                 Inker.InkPresenter.StrokeContainer.Clear();
 
-                StorageFile file = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync($"{tagName}.png", CreationCollisionOption.GenerateUniqueName);
-                bitmap.SaveToFile(file);
-                SendShapeForTraining(bitmap, tagId);
+                if (Debugger.IsAttached)
+                {
+                    var nop1 = SaveBitmapToFile(bitmap, tagName);
+                }
+                var nop2 = SendShapeForTraining(bitmap, tagId);
             }
 
             SetupNextTag();
+            Debug.WriteLine($"total timespent: {(DateTime.Now - dateStart).TotalMilliseconds}");
         }
 
         private void ClearClicked(object sender, RoutedEventArgs e)
         {
             Inker.InkPresenter.StrokeContainer.Clear();
+        }
+
+        private void SkipClicked(object sender, RoutedEventArgs e)
+        {
+            Inker.InkPresenter.StrokeContainer.Clear();
+            SetupNextTag();
         }
 
         private async void MarkdownText_LinkClicked(object sender, Microsoft.Toolkit.Uwp.UI.Controls.LinkClickedEventArgs e)
