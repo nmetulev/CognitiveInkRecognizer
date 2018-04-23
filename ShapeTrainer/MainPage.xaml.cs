@@ -1,4 +1,6 @@
-﻿using Microsoft.Cognitive.CustomVision;
+﻿using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Cognitive.CustomVision;
 using Microsoft.Cognitive.CustomVision.Training;
 using Microsoft.Cognitive.CustomVision.Training.Models;
 using Microsoft.Toolkit.Uwp.Helpers;
@@ -37,6 +39,10 @@ namespace ShapeTrainer
     {
         private static string _trainingKey = "12c3a485406448c9b85b9d83b08a896f";
         private static string _customVisionProjectName = "InkShapes";
+
+        private static string _blobConnectionString = "";
+        private static CloudStorageAccount _storageAccount;
+
         private static TrainingApi _trainingApi = new TrainingApi() { ApiKey = _trainingKey };
         private static Project _project;
         private static TagList _tags;
@@ -75,6 +81,14 @@ namespace ShapeTrainer
                 }
 
                 _tags = await _trainingApi.GetTagsAsync(_project.Id);
+
+                if (CloudStorageAccount.TryParse(_blobConnectionString, out _storageAccount))
+                {
+                    var blobClient = _storageAccount.CreateCloudBlobClient();
+
+                    
+                }
+
             }
             catch (Exception)
             {
