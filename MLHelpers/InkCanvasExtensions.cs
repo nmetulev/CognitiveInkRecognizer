@@ -46,8 +46,6 @@ namespace MLHelpers
 
                 foreach (var stroke in strokes)
                 {
-
-
                     var newStroke = stroke.Clone();
                     newStroke.PointTransform = Matrix3x2.CreateScale(scaleX, scaleY) * Matrix3x2.CreateTranslation(translateX, translateY);
                     newStrokes.Add(newStroke);

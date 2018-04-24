@@ -42,6 +42,8 @@ namespace ShapeTrainer
 
         private static string _blobConnectionString = "";
         private static CloudStorageAccount _storageAccount;
+        private static CloudBlobClient _blobClient;
+        private static Dictionary<string, CloudBlobContainer> _containers = new Dictionary<string, CloudBlobContainer>();
 
         private static TrainingApi _trainingApi = new TrainingApi() { ApiKey = _trainingKey };
         private static Project _project;
@@ -84,9 +86,7 @@ namespace ShapeTrainer
 
                 if (CloudStorageAccount.TryParse(_blobConnectionString, out _storageAccount))
                 {
-                    var blobClient = _storageAccount.CreateCloudBlobClient();
-
-                    
+                    _blobClient = _storageAccount.CreateCloudBlobClient();
                 }
 
             }
@@ -174,7 +174,29 @@ namespace ShapeTrainer
             await bitmap.SaveToFile(file);
         }
 
-        private void SubmitClicked(object sender, RoutedEventArgs e)
+        private async Task SaveShapeDataToBlobStorage(Stream stream, string tag)
+        {
+            if (_blobClient == null)
+            {
+                return;
+            }
+
+            tag = tag.Replace("_", "");
+
+            if (!_containers.TryGetValue(tag, out var container))
+            {
+                container = _blobClient.GetContainerReference(tag);
+                await container.CreateIfNotExistsAsync();
+                _containers.Add(tag, container);
+            }
+
+            var blob = container.GetBlockBlobReference($"{tag}-{Guid.NewGuid().ToString()}.gif");
+            await blob.UploadFromStreamAsync(stream);
+
+            stream.Dispose();
+        }
+
+        private async void SubmitClicked(object sender, RoutedEventArgs e)
         {
             var dateStart = DateTime.Now;
             // skip shape if nothing is drawn
@@ -183,8 +205,13 @@ namespace ShapeTrainer
                 var tagName = _currentTag.Name;
                 var tagId = _currentTag.Id.ToString();
                 var bitmap = Inker.GetCropedSoftwareBitmap(newWidth: 200, newHeight: 200, keepRelativeSize: true);
-
                 Debug.WriteLine($"timespent getting bitmap: {(DateTime.Now - dateStart).TotalMilliseconds}");
+
+                InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+                await Inker.InkPresenter.StrokeContainer.SaveAsync(stream);
+                stream.Seek(0);
+                var nop = SaveShapeDataToBlobStorage(stream.AsStream(), tagName);
+                Debug.WriteLine($"timespent saving strokes: {(DateTime.Now - dateStart).TotalMilliseconds}");
 
                 Inker.InkPresenter.StrokeContainer.Clear();
 
