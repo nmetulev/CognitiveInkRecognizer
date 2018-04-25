@@ -43,8 +43,7 @@ namespace shapre_recognizer
             this.InitializeComponent();
         }
 
-        CvmodelModel model;
-        EmotionModel emotionModel;
+        InkshapesModel model;
 
         DispatcherTimer _timer;
         DispatcherTimer _gameTimer;
@@ -52,12 +51,8 @@ namespace shapre_recognizer
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Models/cvmodel.onnx"));
-            model = await CvmodelModel.CreateCvmodelModel(file);
-
-            file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Models/emotion.onnx"));
-            emotionModel = await EmotionModel.CreateEmotionModel(file);
-
+            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Models/inkshapes.onnx"));
+            model = await InkshapesModel.CreateInkshapesModel(file);
 
             Inker.InkPresenter.InputDeviceTypes =
             CoreInputDeviceTypes.Pen |
@@ -106,7 +101,7 @@ namespace shapre_recognizer
             var bitmapFromStrokes = await RenderStrokes(_strokes);
             var resizedBitmap = await CropAndResize(bitmapFromStrokes, boundingBox, 227, 227);
             var frame = VideoFrame.CreateWithSoftwareBitmap(resizedBitmap);
-            CvmodelModelInput input = new CvmodelModelInput();
+            var input = new InkshapesModelInput();
             input.data = frame;
 
             var output = await model.EvaluateAsync(input);
@@ -134,8 +129,8 @@ namespace shapre_recognizer
             Inker.InkPresenter.StrokeContainer.DeleteSelected();
 
 
-            //result.Text = output.classLabel.First();
-            //resultPer.Text = output.loss.OrderByDescending(kv => kv.Value).First().Value.ToString();
+            result.Text = output.classLabel.First();
+            resultPer.Text = output.loss.OrderByDescending(kv => kv.Value).First().Value.ToString();
             _strokes.Clear();
         }
 
@@ -167,10 +162,10 @@ namespace shapre_recognizer
             }
             VideoFrame frame = VideoFrame.CreateWithSoftwareBitmap(await Resize(softwareBitmap, 277, 277));
 
-            EmotionModelInput input = new EmotionModelInput();
+            var input = new InkshapesModelInput();
             input.data = frame;
 
-            var output = await emotionModel.EvaluateAsync(input);
+            var output = await model.EvaluateAsync(input);
 
             Debug.WriteLine(output.classLabel.First());
 

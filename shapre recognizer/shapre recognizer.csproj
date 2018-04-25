@@ -99,7 +99,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="cvmodel.cs" />
-    <Compile Include="emotion.cs" />
+    <Compile Include="inkshapes.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -109,7 +109,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="models\emotion.onnx" />
+    <Content Include="models\inkshapes.onnx" />
     <None Include="shapre recognizer_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
