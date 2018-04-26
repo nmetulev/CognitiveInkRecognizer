@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
+using Windows.Media;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -70,6 +71,22 @@ namespace ShapeTrainer
             drawingAttributes.FitToCurve = true;
             drawingAttributes.Size = new Size(4, 4);
             Inker.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
+            Inker.InkPresenter.StrokesCollected += InkPresenter_StrokesCollected;
+        }
+
+        private async void InkPresenter_StrokesCollected(InkPresenter sender, InkStrokesCollectedEventArgs args)
+        {
+            var bitmap = Inker.GetCropedSoftwareBitmap(newWidth: 227, newHeight: 227, keepRelativeSize: true);
+            var frame = VideoFrame.CreateWithSoftwareBitmap(bitmap);
+            var input = new InkshapesModelInput();
+            input.data = frame;
+
+            var output = await _model.EvaluateAsync(input);
+
+            var guessedTag = output.classLabel.First();
+            var guessedPercentage = output.loss.OrderByDescending(kv => kv.Value).First().Value.ToString();
+
+            GuessText.Text = $"Current Guess: {guessedTag}({guessedPercentage})";
         }
 
         private async Task<bool> SetupTraining()
@@ -95,8 +112,12 @@ namespace ShapeTrainer
                 _model = await InkshapesModel.CreateInkshapesModel(ModelInfo.Instance.ModelFile, ModelInfo.Instance.NumShapes);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if(Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
                 return false;
             }
 
@@ -228,6 +249,7 @@ namespace ShapeTrainer
             }
 
             SetupNextTag();
+            GuessText.Text = "";
             Debug.WriteLine($"total timespent: {(DateTime.Now - dateStart).TotalMilliseconds}");
         }
 

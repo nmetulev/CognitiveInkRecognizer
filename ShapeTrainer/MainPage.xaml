@@ -84,6 +84,7 @@
                     </animations:Implicit.ShowAnimations>
                     <TextBlock Text="PLEASE DRAW" Foreground="White" Opacity="0.7" FontSize="12"></TextBlock>
                     <TextBlock x:Name="TagText" Text="STICK FIGURE" Foreground="White" FontSize="22"></TextBlock>
+                    <TextBlock x:Name="GuessText" Foreground="White" FontSize="10"></TextBlock>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="20, 0, 40, 0" VerticalAlignment="Center">

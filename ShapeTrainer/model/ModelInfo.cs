@@ -17,7 +17,7 @@ namespace ShapeTrainer
         private const string LOCAL_MODEL_FILENAME = "model.onnx";
 
         private const string SETTINGS_CURRENT_VERSION = "model_version";
-        private const string SETTINGS_CURRENT_NUM_SHAPES = "model_version";
+        private const string SETTINGS_CURRENT_NUM_SHAPES = "model_num_shapes";
 
         private bool _isLocal = true;
 
@@ -43,7 +43,7 @@ namespace ShapeTrainer
             var settings = ApplicationData.Current.LocalSettings;
             settings.Values.TryGetValue(SETTINGS_CURRENT_VERSION, out var currentVersionSetting);
 
-            if (!Instance._isLocal && currentVersionSetting is int currentVersion && Instance.Version > currentVersion)
+            if (!Instance._isLocal && (currentVersionSetting == null || (currentVersionSetting is int currentVersion && Instance.Version > currentVersion)))
             {
                 // download latest
                 Instance.ModelFile = await Instance.DownloadLatestModel();
