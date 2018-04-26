@@ -53,6 +53,8 @@ namespace ShapeTrainer
         private Queue<Tag> _previousTags = new Queue<Tag>();
         private Tag _currentTag;
 
+        private InkshapesModel _model;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -88,6 +90,9 @@ namespace ShapeTrainer
                 {
                     _blobClient = _storageAccount.CreateCloudBlobClient();
                 }
+
+                await ModelInfo.SetupModelInfo();
+                _model = await InkshapesModel.CreateInkshapesModel(ModelInfo.Instance.ModelFile, ModelInfo.Instance.NumShapes);
 
             }
             catch (Exception)

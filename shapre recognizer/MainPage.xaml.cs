@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -28,6 +27,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Windows.Web.Http;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -51,7 +51,17 @@ namespace shapre_recognizer
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Models/inkshapes.onnx"));
+            var modelFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("model.onnx", CreationCollisionOption.ReplaceExisting);
+
+            using (var client = new HttpClient())
+            using (var stream = await client.GetInputStreamAsync(new Uri("https://github.com/nmetulev/CognitiveInkRecognizer/raw/winml/model/inkshapes.onnx")))
+            using (var fileStream = await modelFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await stream.AsStreamForRead().CopyToAsync(fileStream.AsStream());
+            }
+
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync("model.onnx");
+            //var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Models/inkshapes.onnx"));
             model = await InkshapesModel.CreateInkshapesModel(file);
 
             Inker.InkPresenter.InputDeviceTypes =
@@ -70,6 +80,8 @@ namespace shapre_recognizer
 
             _strokes = new List<InkStroke>();
         }
+
+
 
         private void StrokeInput_StrokeStarted(InkStrokeInput sender, PointerEventArgs args)
         {

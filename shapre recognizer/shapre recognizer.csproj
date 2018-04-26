@@ -92,7 +92,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="models\test.jpg" />
-    <Content Include="models\cvmodel.onnx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -109,7 +108,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="models\inkshapes.onnx" />
     <None Include="shapre recognizer_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
