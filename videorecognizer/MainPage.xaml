@@ -11,6 +11,8 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:CameraPreview FrameArrived="CameraPreview_FrameArrived"></controls:CameraPreview>
 
-        <TextBlock Foreground="White" x:Name="GuessText" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="40" />
+        <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="40" Padding="20" Background="{ThemeResource SystemBaseLowColor}">
+            <TextBlock Foreground="{ThemeResource SystemAltHighColor}" x:Name="GuessText"  />
+        </Border>
     </Grid>
 </Page>

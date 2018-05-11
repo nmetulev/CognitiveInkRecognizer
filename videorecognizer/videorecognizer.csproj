@@ -133,7 +133,7 @@
       <Version>6.0.8</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>3.0.0-build.83.gea3b77bfcb</Version>
+      <Version>3.0.0-build.84.g8ea81b8433</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
