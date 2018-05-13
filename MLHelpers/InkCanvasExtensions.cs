@@ -16,6 +16,20 @@ namespace MLHelpers
 {
     public static class InkCanvasExtensions
     {
+        private static InkDrawingAttributes _defaultDrawingAttributes;
+
+        private static InkDrawingAttributes GetDefaultInkDrawingAttributes()
+        {
+            if (_defaultDrawingAttributes == null)
+            {
+                _defaultDrawingAttributes = new InkDrawingAttributes();
+                _defaultDrawingAttributes.Color = Colors.Black;
+                _defaultDrawingAttributes.Size = new Size(2, 2);
+            }
+
+            return _defaultDrawingAttributes;
+        }
+
         public static SoftwareBitmap GetSoftwareBitmap(this InkCanvas canvas, IEnumerable<InkStroke> strokes = null)
         {
             CanvasDevice device = CanvasDevice.GetSharedDevice();
@@ -48,6 +62,7 @@ namespace MLHelpers
                 {
                     var newStroke = stroke.Clone();
                     newStroke.PointTransform = Matrix3x2.CreateScale(scaleX, scaleY) * Matrix3x2.CreateTranslation(translateX, translateY);
+                    newStroke.DrawingAttributes = GetDefaultInkDrawingAttributes();
                     newStrokes.Add(newStroke);
                 }
 
