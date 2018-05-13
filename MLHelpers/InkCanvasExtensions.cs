@@ -24,7 +24,7 @@ namespace MLHelpers
             {
                 _defaultDrawingAttributes = new InkDrawingAttributes();
                 _defaultDrawingAttributes.Color = Colors.Black;
-                _defaultDrawingAttributes.Size = new Size(2, 2);
+                _defaultDrawingAttributes.Size = new Size(4, 4);
             }
 
             return _defaultDrawingAttributes;

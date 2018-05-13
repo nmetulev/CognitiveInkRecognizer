@@ -43,26 +43,26 @@ namespace ShapeTrainer
             var settings = ApplicationData.Current.LocalSettings;
             settings.Values.TryGetValue(SETTINGS_CURRENT_VERSION, out var currentVersionSetting);
 
-            if (!Instance._isLocal && (currentVersionSetting == null || (currentVersionSetting is int currentVersion && Instance.Version > currentVersion)))
-            {
-                // download latest
-                Instance.ModelFile = await Instance.DownloadLatestModel();
-                if (Instance.ModelFile != null)
-                {
-                    settings.Values[SETTINGS_CURRENT_VERSION] = Instance.Version;
-                    settings.Values[SETTINGS_CURRENT_NUM_SHAPES] = Instance.NumShapes;
-                }
-            }
+            //if (!Instance._isLocal && (currentVersionSetting == null || (currentVersionSetting is int currentVersion && Instance.Version > currentVersion)))
+            //{
+            //    // download latest
+            //    Instance.ModelFile = await Instance.DownloadLatestModel();
+            //    if (Instance.ModelFile != null)
+            //    {
+            //        settings.Values[SETTINGS_CURRENT_VERSION] = Instance.Version;
+            //        settings.Values[SETTINGS_CURRENT_NUM_SHAPES] = Instance.NumShapes;
+            //    }
+            //}
 
-            if (Instance.ModelFile == null)
-            {
-                // get cached if available
-                try
-                {
-                    Instance.ModelFile = await ApplicationData.Current.LocalFolder.GetFileAsync(LOCAL_MODEL_FILENAME);
-                }
-                catch (Exception) {  }
-            }
+            //if (Instance.ModelFile == null)
+            //{
+            //    // get cached if available
+            //    try
+            //    {
+            //        Instance.ModelFile = await ApplicationData.Current.LocalFolder.GetFileAsync(LOCAL_MODEL_FILENAME);
+            //    }
+            //    catch (Exception) {  }
+            //}
 
             if (Instance.ModelFile == null)
             {
