@@ -1,6 +1,8 @@
-﻿using MLHelpers;
+﻿using Microsoft.Cognitive.CustomVision.Training.Models;
+using MLHelpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -28,6 +30,12 @@ namespace ShapeTrainer
     {
         private InkshapesModel _model;
 
+        private static Random random = new Random(Guid.NewGuid().GetHashCode());
+        private Queue<Tag> _previousTags = new Queue<Tag>();
+
+        private ObservableCollection<Tag> _currentTags = new ObservableCollection<Tag>();
+        private Tag _guessedTag;
+
         public GuessPage()
         {
             this.InitializeComponent();
@@ -49,6 +57,8 @@ namespace ShapeTrainer
         {
             await ModelInfo.SetupModelInfo();
             _model = await InkshapesModel.CreateInkshapesModel(ModelInfo.Instance.ModelFile, ModelInfo.Instance.NumShapes);
+
+            SetupNextTags();
         }
 
         private async void InkPresenter_StrokesCollected(InkPresenter sender, InkStrokesCollectedEventArgs args)
@@ -64,6 +74,30 @@ namespace ShapeTrainer
             var guessedPercentage = output.loss.OrderByDescending(kv => kv.Value).First().Value.ToString();
 
             GuessText.Text = $"Current Guess: {guessedTag}({guessedPercentage})";
+        }
+
+        private void SetupNextTags()
+        {
+            _currentTags.Clear();
+
+            for (var i = 0; i < 5; i++)
+            {
+                Tag tag = null;
+                do
+                {
+                    tag = TrainingService.Tags.Tags[random.Next(0, TrainingService.Tags.Tags.Count)];
+                }
+                while (_previousTags.Contains(tag));
+
+                _previousTags.Enqueue(tag);
+                if (_previousTags.Count > TrainingService.Tags.Tags.Count / 2)
+                {
+                    _previousTags.Dequeue();
+                }
+
+                _currentTags.Add(tag);
+            }
+
         }
     }
 }
